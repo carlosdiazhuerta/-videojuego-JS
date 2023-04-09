@@ -9,6 +9,11 @@ const spanTime = document.querySelector('#time');
 const spanRecord = document.querySelector('#record');
 const pResult = document.querySelector('#result');
 
+
+const reset_button = document.querySelector('#reset_button');
+
+reset_button.addEventListener('click', resetGame);
+
 let canvasSize;
 let elementsSize;
 let level = 0;
@@ -111,12 +116,7 @@ function startGame() {
 
   movePlayer();
 }
-function showColision() {
-    game.fillText (emojis['BOMB_COLLISION'], playerPosition.x, playerPosition.y);
-    playerPosition.x = undefined;
-    playerPosition.y = undefined;
-    console.log ('choque');
-  }
+
 function movePlayer() {
   const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
   const giftCollisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
@@ -134,9 +134,8 @@ function movePlayer() {
   
   if (enemyCollision) {
     showColision();
-    //espera 1 segundo para empezar la funciona level fail//
     setTimeout (levelFail,1000);
- }
+}
 
   game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
 }
@@ -183,6 +182,12 @@ function gameWin() {
 
   console.log({recordTime, playerTime});
 }
+function showColision() {
+    game.fillText (emojis['BOMB_COLLISION'], playerPosition.x, playerPosition.y);
+    playerPosition.x = undefined;
+    playerPosition.y = undefined;
+    console.log ('choque');
+  }
 
 function showLives() {
   const heartsArray = Array(lives).fill(emojis['HEART']); // [1,2,3]
@@ -240,6 +245,9 @@ function moveRight() {
     playerPosition.x += elementsSize;
     startGame();
   }
+}
+function resetGame() {
+    location.reload();
 }
 function moveDown() {
   console.log('Me quiero mover hacia abajo');
