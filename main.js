@@ -23,7 +23,7 @@ let timeStart;
 let timePlayer;
 let timeInterval;
 
-const playerPosition = {
+const playerPosition= {
   x: undefined,
   y: undefined,
 };
@@ -33,32 +33,38 @@ const giftPosition = {
 };
 let enemyPositions = [];
 
-window.addEventListener('load', setCanvasSize);
-window.addEventListener('resize', setCanvasSize);
+window.addEventListener('load', resizeCanvas);
+window.addEventListener('resize', resizeCanvas);
 
 function fixNumber(n) {
-  return Number(n.toFixed(2));
+  return Number(n.toFixed(0));
 }
 
-function setCanvasSize() {
-  if (window.innerHeight > window.innerWidth) {
-    canvasSize = window.innerWidth * 0.95;
-  } else {
-    canvasSize = window.innerHeight * 0.95;
-  }
-  
-  canvasSize = Number(canvasSize.toFixed(2));
-  
-  canvas.setAttribute('width', canvasSize);
-  canvas.setAttribute('height', canvasSize);
-  
-  elementsSize = canvasSize / 10;
+function resizeCanvas () {
+    windowHeight = window.innerHeight * 0.9;
+    windowWidth = window.innerWidth * 0.9;
+    //Dependiendo del tamaño de la pantalla, va a colocar el tamaño cuadrado del canvas
+    //Al dividir entre 10 y luego aproximar el valor a un entero garantiza que el canvas será un entero múltiplo de 10. Finalmente se multiplica la expresión por 10 para obtener el dato real del canvas
+    //Con Math.ceil nos ahorramos el problema de los decimales
+    if (window.innerHeight > window.innerWidth) {
+        if ((windowWidth % 10) !== 0) {
+             canvasSize = Math.ceil(windowWidth / 10) * 10;
+        } else {
+             canvasSize = windowWidth;
+        }} 
+    else {
+        if ((windowHeight % 10) !== 0) {
+             canvasSize = Math.ceil(windowHeight / 10) * 10;
+        } else {
+             canvasSize = windowHeight;
+        }
+    }
 
-     playerPosition.x = undefined;
-  playerPosition.y = undefined;
-  startGame();
-}
-
+     canvas.setAttribute('width', canvasSize);
+     canvas.setAttribute('height', canvasSize);
+     elementsSize = (canvasSize / 10);
+     startGame();
+ }
 function startGame() {
   console.log({ canvasSize, elementsSize });
   // console.log(window.innerWidth, window.innerHeight);
@@ -118,27 +124,34 @@ function startGame() {
 }
 
 function movePlayer() {
-  const giftCollisionX = Number(playerPosition.x.toFixed(2)) == Number(giftPosition.x.toFixed(2));
-  const giftCollisionY = Number(playerPosition.y.toFixed(2)) == Number(giftPosition.y.toFixed(2));
-  const giftCollision = giftCollisionX && giftCollisionY;
+    const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
+    const giftCollisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
+    const giftCollision = giftCollisionX && giftCollisionY;
   
-  if (giftCollision) {
-    levelWin();
+    if(giftCollision) {
+      winningLevel();
+    } 
+    const enemyCollision = enemyPositions.find(enemy => {
+      const enemyCollisionX =  enemy.x.toFixed(3) == playerPosition.x.toFixed(3);
+      const enemyCollisionY = enemy.y.toFixed(3) == playerPosition.y.toFixed(3);
+      return enemyCollisionX && enemyCollisionY;
+    });
+  
+    if (enemyCollision) {
+        showColision();
+        //espera 1 segundo para empezar la funciona level fail//
+        setTimeout (levelFail,1000);
+    }
+  
+    game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
+    
   }
-
-  const enemyCollision = enemyPositions.find(enemy => {
-    const enemyCollisionX = Number(enemy.x.toFixed(2)) == Number(playerPosition.x.toFixed(2));
-    const enemyCollisionY = Number(enemy.y.toFixed(2)) == Number(playerPosition.y.toFixed(2));
-    return enemyCollisionX && enemyCollisionY;
-  });
   
-  if (enemyCollision) {
-    showColision();
-    setTimeout (levelFail,1000);
-}
-
-  game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
-}
+  function winningLevel() {
+    console.log('Level up');
+    level ++;
+    startGame();
+  }
 
 function levelWin() {
   console.log('Subiste de nivel');
@@ -218,14 +231,14 @@ function moveByKeys(event) {
 }
 function moveUp() {
   console.log('Me quiero mover hacia arriba');
-
   if ((playerPosition.y - elementsSize) < elementsSize) {
     console.log('OUT');
   } else {
-    playerPosition.y -= elementsSize;
+     playerPosition.y-= elementsSize;
     startGame();
   }
 }
+
 function moveLeft() {
   console.log('Me quiero mover hacia izquierda');
 
