@@ -1,5 +1,6 @@
 body {
-    background-color: indigo;
+    background: rgb(131,58,180);
+background: linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(8,137,233,1) 50%, rgba(252,176,69,1) 100%);
     color: #fff;  
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin: 0;
@@ -57,6 +58,6 @@ body {
   }
   
   @media (max-width: 440px) {
-    button { margin-top: 25px; }
+    button { margin-top: 5px; }
     #up, #down { margin-left: 100%; margin-right: 100%; }
   }

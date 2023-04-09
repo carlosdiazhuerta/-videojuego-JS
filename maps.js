@@ -2,18 +2,19 @@
  * Reglas:
  * El final de cada nivel debe ser el inicio del siguiente
 */
-
 const emojis = {
     '-': ' ',
     'O': '🚪',
     'X': '🧟‍♀️',
     'I': '🙋‍♀️',
     'PLAYER': '🤵',
-    'BOMB_COLLISION': '🔥',
-    'GAME_OVER': '👎',
+    'BOMB_COLLISION': '💥',
+    'GAME_OVER': '😈',
     'WIN': '🏆',
-    'HEART': '💖',
-  };
+    'HEART': '❤️',
+    'PARTY_1': '👩‍❤️‍👨',
+    'PARTY_2': '👩‍❤️‍👨'};
+
   
   const maps = [];
   maps.push(`

@@ -5,11 +5,18 @@ const btnLeft = document.querySelector('#left');
 const btnRight = document.querySelector('#right');
 const btnDown = document.querySelector('#down');
 const spanLives = document.querySelector('#lives');
+const spanTime = document.querySelector('#time');
+const spanRecord = document.querySelector('#record');
+const pResult = document.querySelector('#result');
 
 let canvasSize;
 let elementsSize;
 let level = 0;
 let lives = 3;
+
+let timeStart;
+let timePlayer;
+let timeInterval;
 
 const playerPosition = {
   x: undefined,
@@ -24,23 +31,32 @@ let enemyPositions = [];
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize', setCanvasSize);
 
+function fixNumber(n) {
+  return Number(n.toFixed(2));
+}
+
 function setCanvasSize() {
   if (window.innerHeight > window.innerWidth) {
-    canvasSize = window.innerWidth * 0.8;
+    canvasSize = window.innerWidth * 0.7;
   } else {
-    canvasSize = window.innerHeight * 0.8;
+    canvasSize = window.innerHeight * 0.7;
   }
+  
+  canvasSize = Number(canvasSize.toFixed(0));
   
   canvas.setAttribute('width', canvasSize);
   canvas.setAttribute('height', canvasSize);
   
   elementsSize = canvasSize / 10;
 
+  playerPosition.x = undefined;
+  playerPosition.y = undefined;
   startGame();
 }
 
 function startGame() {
   console.log({ canvasSize, elementsSize });
+  // console.log(window.innerWidth, window.innerHeight);
 
   game.font = elementsSize + 'px Verdana';
   game.textAlign = 'end';
@@ -50,6 +66,12 @@ function startGame() {
   if (!map) {
     gameWin();
     return;
+  }
+
+  if (!timeStart) {
+    timeStart = Date.now();
+    timeInterval = setInterval(showTime, 100);
+    showRecord();
   }
   
   const mapRows = map.trim().split('\n');
@@ -71,7 +93,7 @@ function startGame() {
         if (!playerPosition.x && !playerPosition.y) {
           playerPosition.x = posX;
           playerPosition.y = posY;
-          console.log({playerPosition});
+          // console.log({playerPosition});
         }
       } else if (col == 'I') {
         giftPosition.x = posX;
@@ -89,7 +111,12 @@ function startGame() {
 
   movePlayer();
 }
-
+function showColision() {
+    game.fillText (emojis['BOMB_COLLISION'], playerPosition.x, playerPosition.y);
+    playerPosition.x = undefined;
+    playerPosition.y = undefined;
+    console.log ('choque');
+  }
 function movePlayer() {
   const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
   const giftCollisionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
@@ -106,8 +133,10 @@ function movePlayer() {
   });
   
   if (enemyCollision) {
-    levelFail();
-  }
+    showColision();
+    //espera 1 segundo para empezar la funciona level fail//
+    setTimeout (levelFail,1000);
+ }
 
   game.fillText(emojis['PLAYER'], playerPosition.x, playerPosition.y);
 }
@@ -125,6 +154,7 @@ function levelFail() {
   if (lives <= 0) {
     level = 0;
     lives = 3;
+    timeStart = undefined;
   }
 
   playerPosition.x = undefined;
@@ -134,14 +164,39 @@ function levelFail() {
 
 function gameWin() {
   console.log('¡Terminaste el juego!');
+  clearInterval(timeInterval);
+
+  const recordTime = localStorage.getItem('record_time');
+  const playerTime = Date.now() - timeStart;
+
+  if (recordTime) {
+    if (recordTime >= playerTime) {
+      localStorage.setItem('record_time', playerTime);
+      pResult.innerHTML = 'SUPERASTE EL RECORD :)';
+    } else {
+      pResult.innerHTML = 'lo siento, no superaste el records :(';
+    }
+  } else {
+    localStorage.setItem('record_time', playerTime);
+    pResult.innerHTML = 'Primera vez? Muy bien, pero ahora trata de superar tu tiempo :)';
+  }
+
+  console.log({recordTime, playerTime});
 }
 
 function showLives() {
   const heartsArray = Array(lives).fill(emojis['HEART']); // [1,2,3]
-  // console.log(heartsArray);
   
   spanLives.innerHTML = "";
   heartsArray.forEach(heart => spanLives.append(heart));
+}
+
+function showTime() {
+  spanTime.innerHTML = Date.now() - timeStart;
+}
+
+function showRecord() {
+  spanRecord.innerHTML = localStorage.getItem('record_time');
 }
 
 window.addEventListener('keydown', moveByKeys);
