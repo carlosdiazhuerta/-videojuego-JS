@@ -42,12 +42,12 @@ function fixNumber(n) {
 
 function setCanvasSize() {
   if (window.innerHeight > window.innerWidth) {
-    canvasSize = window.innerWidth * 0.9;
+    canvasSize = window.innerWidth * 0.95;
   } else {
-    canvasSize = window.innerHeight * 0.9;
+    canvasSize = window.innerHeight * 0.95;
   }
   
-  canvasSize = Number(canvasSize.toFixed(0));
+  canvasSize = Number(canvasSize.toFixed(2));
   
   canvas.setAttribute('width', canvasSize);
   canvas.setAttribute('height', canvasSize);
@@ -127,7 +127,7 @@ function movePlayer() {
   }
 
   const enemyCollision = enemyPositions.find(enemy => {
-    const enemyCollisionX = Number(enemy.x.toFixed(2)) == Number(playerPosition.x.toFixed(3));
+    const enemyCollisionX = Number(enemy.x.toFixed(2)) == Number(playerPosition.x.toFixed(2));
     const enemyCollisionY = Number(enemy.y.toFixed(2)) == Number(playerPosition.y.toFixed(2));
     return enemyCollisionX && enemyCollisionY;
   });
